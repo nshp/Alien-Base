@@ -29,8 +29,6 @@ my %build_args = (
     'Archive::Extract' => 0,
     'HTTP::Tiny'       => '0.044',
     'Text::ParseWords' => '3.26',
-    'Shell::Guess'     => 0,
-    'Shell::Config::Generate' => 0,
     'FFI::CheckLib'    => 0.11,
     'JSON::PP'          => 0,
   },

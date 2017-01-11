@@ -21,8 +21,6 @@ use List::MoreUtils qw/uniq first_index/;
 use ExtUtils::Installed;
 use File::Copy qw/move/;
 use Env qw( @PATH );
-use Shell::Guess;
-use Shell::Config::Generate;
 use File::Path qw/mkpath/;
 use Config;
 use Text::ParseWords qw( shellwords );
@@ -204,6 +202,9 @@ sub new {
       }
       $self->_add_prereq( 'build_requires', $tool, $version );
     }
+    
+    $self->_add_prereq( 'build_requires', 'Shell::Config::Generate', 0 );
+    $self->_add_prereq( 'build_requires', 'Shell::Guess', 0 );
   }
 
 
@@ -684,6 +685,7 @@ sub alien_detect_blib_scheme {
 
 sub _shell_config_generate
 {
+  require Shell::Config::Generate;
   my $scg = Shell::Config::Generate->new;
   $scg->comment(
     'this script sets the environment needed to build this package.',
@@ -744,10 +746,13 @@ sub alien_do_system {
     # remove anything already in PATH
     delete $path{$_} for @PATH;
     # add anything else to start of PATH
-    unshift @PATH, sort keys %path;
+    my @add = sort keys %path;
+    unshift @PATH, @add;
 
-    $config ||= _shell_config_generate();
-    $config->prepend_path( PATH => sort keys %path );
+    if(@add > 0) {
+      $config ||= _shell_config_generate();
+      $config->prepend_path( PATH => sort keys %path );
+    }
   }
 
   # If we are using autoconf, then create a site.config file
@@ -793,7 +798,8 @@ sub alien_do_system {
     $config->set( $key => $value );
   }
 
-  if($config) {  
+  if($config) {
+    require Shell::Guess;
     if($^O eq 'MSWin32') {
       local $CWD;
       pop @CWD;
