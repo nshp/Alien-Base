@@ -1059,6 +1059,12 @@ sub _alien_file_pattern_static {
   return qr/(\.h|$ext)$/;
 }
 
+sub _uniq
+{
+  my %seen;
+  grep { !$seen{$_}++ } @_;
+}
+
 sub alien_find_lib_paths {
   my $self = shift;
   my ($dir) = @_;
@@ -1101,11 +1107,11 @@ sub alien_find_lib_paths {
     }
   }
 
-  @lib_files = uniq @lib_files;
+  @lib_files = _uniq @lib_files;
   @lib_files = sort @lib_files;
 
-  @lib_paths = uniq @lib_paths;
-  @inc_paths = uniq @inc_paths;
+  @lib_paths = _uniq @lib_paths;
+  @inc_paths = _uniq @inc_paths;
 
   return { lib => \@lib_paths, inc => \@inc_paths, lib_files => \@lib_files };
 }
