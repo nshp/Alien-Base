@@ -7,7 +7,6 @@ our $VERSION = '0.030_01';
 $VERSION = eval $VERSION;
 
 use Sort::Versions;
-use List::MoreUtils qw/part/;
 
 sub new {
   my $class = shift;

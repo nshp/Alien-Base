@@ -20,7 +20,6 @@ my @mods = qw(
   Inline
   Inline::C
   Inline::CPP
-  List::MoreUtils
   Module::Build
   Perl::OSType
   Shell::Config::Generate
