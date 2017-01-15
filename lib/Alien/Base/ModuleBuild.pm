@@ -17,7 +17,7 @@ no warnings;
 use Archive::Extract;
 use warnings;
 use Sort::Versions;
-use List::MoreUtils qw/uniq first_index/;
+use List::Util qw/uniq/;
 use ExtUtils::Installed;
 use File::Copy qw/move/;
 use Env qw( @PATH );
@@ -666,7 +666,13 @@ sub alien_detect_blib_scheme {
   (undef, my $dir, undef) = File::Spec->splitpath( __FILE__ );
   my @dirs = File::Spec->splitdir($dir);
 
-  my $index = first_index { $_ eq 'blib' } @dirs;
+  my $index = -1;
+  foreach my $i (0..$#dirs) {
+    if($dirs[$i] eq 'blib') {
+      $index = $i;
+      last;
+    }
+  }
   return 0 if $index == -1;
 
   if ( $dirs[$index+1] eq 'lib' ) {

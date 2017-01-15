@@ -29,15 +29,13 @@ sub add_files {
 sub sort_files {
   my $self = shift;
 
-  # split files which have versions and those which don't (sorted on filename)
-  my ($name, $version) = part { $_->has_version } @{ $self->{files} };
-
-  # store the sorted lists of versioned, then non-versioned
-  my @sorted;
-  push @sorted, sort { versioncmp( $b->version,  $a->version  ) } @$version if $version;
-  push @sorted, sort { versioncmp( $b->filename, $a->filename ) } @$name    if $name;
-
-  $self->{files} = \@sorted;
+  $self->{files} = [
+    sort {
+      $a->has_version
+        ? ($b->has_version ? versioncmp($b->version, $a->version) : -1)
+        : ($b->has_version ? 1 : version($b->filename, $a->filename))
+    } @{ $self->{files} }
+  ];
 
   return;
 }
