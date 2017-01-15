@@ -17,7 +17,6 @@ no warnings;
 use Archive::Extract;
 use warnings;
 use Sort::Versions;
-use List::Util qw/uniq/;
 use ExtUtils::Installed;
 use File::Copy qw/move/;
 use Env qw( @PATH );
