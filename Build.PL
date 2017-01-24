@@ -21,16 +21,10 @@ my %build_args = (
     'Module::Build'    => 0.36,
     'Capture::Tiny'    => 0.17,
     'File::chdir'      => 0.1005,
-    'Sort::Versions'   => 0,
-    'List::MoreUtils'  => 0,
     'Perl::OSType'     => 0,
-    'URI'              => 0,
     'File::ShareDir'   => 0,
-    'Archive::Extract' => 0,
     'HTTP::Tiny'       => '0.044',
     'Text::ParseWords' => '3.26',
-    'Shell::Guess'     => 0,
-    'Shell::Config::Generate' => 0,
     'FFI::CheckLib'    => 0.11,
     'JSON::PP'          => 0,
   },
@@ -40,9 +34,6 @@ my %build_args = (
     'FindBin'          => 0,
     'File::Spec'       => 0,
     'File::Temp'       => 0,
-  },
-  recommends => {
-    'HTML::LinkExtor' => 0,
   },
   meta_merge => {
     resources  => {
