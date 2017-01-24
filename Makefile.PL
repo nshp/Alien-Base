@@ -1,0 +1,87 @@
+use strict;
+use warnings;
+use ExtUtils::MakeMaker;
+use Config;
+
+my %make_args = (
+  NAME     => 'Alien::Base',
+  DISTNAME => 'Alien-Base',
+  AUTHOR   => [
+    'Graham Ollis <plicease@cpan.org>',
+    'Joel A. Berger <joel.a.berger@gmail.com>',
+  ],
+  LICENSE => 'perl',
+
+  CONFIGURE_REQUIRES => {
+    'ExtUtils::MakeMaker' => 0,
+  },
+  PREREQ_PM => {
+    'perl'             => '5.008001',
+    'parent'           => 0,
+    'Capture::Tiny'    => 0.17,
+    'File::chdir'      => 0.1005,
+    'Perl::OSType'     => 0,
+    'File::ShareDir'   => 0,
+    'Text::ParseWords' => '3.26',
+    'FFI::CheckLib'    => 0.11,
+    'JSON::PP'          => 0,
+  },
+  BUILD_REQUIRES => {
+  },
+  TEST_REQUIRES => {
+    'Test::More'       => 0.94,
+  },
+
+  META_MERGE => {
+    'meta-spec' => { version => 2 },
+    resources => {
+      repository => {
+        type => 'git',
+        url  => "http://github.com/Perl5-Alien/Alien-Base.git",
+        web  => "http://github.com/Perl5-Alien/Alien-Base",
+      },
+      bugtracker => {
+        web => "http://github.com/Perl5-Alien/Alien-Base/issues",
+      },
+      homepage => "https://metacpan.org/pod/PkgConfig-LibPkgConf",
+      x_MailingList => "https://groups.google.com/forum/#!forum/perl5-alien",
+      x_IRC => "irc://irc.perl.org/#native",
+    },
+    dynamic_config => 1,
+  },
+
+  clean => {
+    FILES => '_Inline', 'Alien-Base-*',
+  },
+);
+
+unless(`pkg-config --version` && $? == 0) {
+  $make_args{'PREREQ_PM'}->{'PkgConfig'} = '0.07520';
+}
+
+# For now we prefer PkgConfig.pm over pkg-config on
+# Solaris 64 bit Perls.  We may need to do this on
+# other platforms, in which case this logic should
+# be abstracted so that it can be shared here and
+# in lib/Alien/Base.pm#pkg_config_command
+if($^O eq 'solaris' && $Config{ptrsize} == 8) {
+  $make_args{'PREREQ_PM'}->{'PkgConfig'} = '0.08826';
+}
+
+
+my %fallback = (
+  %{ $make_args{TEST_REQUIRES} },
+  %{ $make_args{BUILD_REQUIRES} },
+  %{ $make_args{PREREQ_PM} },
+);
+
+unless ( eval { ExtUtils::MakeMaker->VERSION(6.63_03) } ) {
+  $make_args{PREREQ_PM} = \%fallback;
+  delete $make_args{TEST_REQUIRES};
+  delete $make_args{BUILD_REQUIRES};
+}
+
+delete $make_args{CONFIGURE_REQUIRES}
+  unless eval { ExtUtils::MakeMaker->VERSION(6.52) };
+
+WriteMakefile(%make_args);
